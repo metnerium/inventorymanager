@@ -12,7 +12,7 @@ class QVBoxLayout;
 class QTableView;
 class QPushButton;
 class QLabel;
-
+class MainWindow;
 class AddRecordDialog : public QDialog {
 Q_OBJECT
 
@@ -38,8 +38,7 @@ class EditRecordDialog : public QDialog {
 Q_OBJECT
 
 public:
-    EditRecordDialog(QSqlTableModel *model, QWidget *parent = nullptr);
-
+    EditRecordDialog(QSqlTableModel *model, MainWindow *parent);
 private slots:
     void saveChanges();
 
@@ -49,6 +48,7 @@ private:
     QPushButton *cancelButton;
     QSqlTableModel *model;
     QSqlTableModel *modelCopy;
+    MainWindow* mainWindow;
 };
 
 class MainWindow : public QMainWindow {

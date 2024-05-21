@@ -229,8 +229,8 @@ void MainWindow::showAnalyticsView() {
 
     analyticsView->exec();
 }
-EditRecordDialog::EditRecordDialog(QSqlTableModel* model, QWidget *parent)
-        : QDialog(parent), model(model)
+EditRecordDialog::EditRecordDialog(QSqlTableModel* model, MainWindow* parent)
+        : QDialog(parent), model(model), mainWindow(parent)
 {
     setWindowTitle("Редактирование записей");
     resize(800, 600);
@@ -256,12 +256,9 @@ EditRecordDialog::EditRecordDialog(QSqlTableModel* model, QWidget *parent)
 void EditRecordDialog::saveChanges()
 {
     if (model->submitAll()) {
-        // Обновляем модель данных в главном окне
-        MainWindow* mainWindow = qobject_cast<MainWindow*>(parent());
-        if (mainWindow) {
-            mainWindow->model->select();
-        }
+        mainWindow->refresh();
         accept();
+
     } else {
         QMessageBox::critical(this, "Error", "Failed to save changes");
     }
@@ -285,15 +282,14 @@ void MainWindow::showEditRecordDialog()
     modelCopy = new QSqlTableModel(this, db);
     modelCopy->setTable("products");
     modelCopy->select();
-    EditRecordDialog editDialog(modelCopy, this);
+    EditRecordDialog editDialog(modelCopy, this); // Передаем this в конструктор
     if (editDialog.exec() == QDialog::Accepted) {
         // Если пользователь нажал "Сохранить", заменяем основную модель данных
         model = modelCopy;
         modelCopy = nullptr;
-        model->select();
     }
     // Если пользователь нажал "Отмена", мы просто выходим из диалога, и modelCopy будет удален при закрытии приложения
 }
 void MainWindow::refresh() {
-
+    model->select();
 }
