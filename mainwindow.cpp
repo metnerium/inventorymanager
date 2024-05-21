@@ -9,6 +9,8 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QTextDocument>
+#include <QPrinter>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
@@ -45,31 +47,25 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::setupUI() {
     centralWidget = new QWidget(this);
     mainLayout = new QVBoxLayout(centralWidget);
-
-    tableView = new QTableView;
-    tableView->setModel(model);
-    mainLayout->addWidget(tableView);
-
-    addButton = new QPushButton("Add Record");
-    editButton = new QPushButton("Edit Record");
-    printButton = new QPushButton("Print");
-    analyticsButton = new QPushButton("Analytics");
-
-    mainLayout->addWidget(addButton);
-    mainLayout->addWidget(editButton);
+    auto *viewButton = new QPushButton("Просмотр данных");
+    auto *exitbutton = new QPushButton("Выход");
+    printButton = new QPushButton("Печать");
+    analyticsButton = new QPushButton("Аналитика");
+    mainLayout->addWidget(viewButton);
     mainLayout->addWidget(printButton);
     mainLayout->addWidget(analyticsButton);
-
-    connect(addButton, &QPushButton::clicked, this, &MainWindow::showAddRecordDialog);
-    connect(printButton, &QPushButton::clicked, this, &MainWindow::showPrintView);
+    mainLayout->addWidget(exitbutton);
+    connect(viewButton, &QPushButton::clicked, this, &MainWindow::showDataView);
     connect(analyticsButton, &QPushButton::clicked, this, &MainWindow::showAnalyticsView);
+    connect(printButton, &QPushButton::clicked, this, &MainWindow::showPrintView);
+    connect(exitbutton, &QPushButton::clicked, this, &MainWindow::close);
 
     setCentralWidget(centralWidget);
 }
 AddRecordDialog::AddRecordDialog(QWidget *parent)
     : QDialog(parent) {
     QVBoxLayout *layout = new QVBoxLayout(this);
-
+    this->resize(400, 500);
     QLabel *storeNameLabel = new QLabel("Store Name:");
     storeNameEdit = new QLineEdit;
     layout->addWidget(storeNameLabel);
@@ -111,8 +107,8 @@ AddRecordDialog::AddRecordDialog(QWidget *parent)
     layout->addWidget(employeeNameLabel);
     layout->addWidget(employeeNameEdit);
 
-    addButton = new QPushButton("Add");
-    cancelButton = new QPushButton("Cancel");
+    addButton = new QPushButton("Добавить");
+    cancelButton = new QPushButton("Назад");
     layout->addWidget(addButton);
     layout->addWidget(cancelButton);
 }
@@ -144,17 +140,17 @@ void MainWindow::createAddRecordDialog() {
 
 void MainWindow::showDataView() {
     QDialog *dataView = new QDialog(this);
-    dataView->setWindowTitle("View Data");
-
+    dataView->setWindowTitle("Просмотр данных");
+    dataView->resize(800, 600);
     QVBoxLayout *layout = new QVBoxLayout(dataView);
 
     QTableView *tableView = new QTableView(dataView);
     tableView->setModel(model);
     layout->addWidget(tableView);
 
-    QPushButton *addButton = new QPushButton("Add Record");
-    QPushButton *editButton = new QPushButton("Edit Record");
-    QPushButton *backButton = new QPushButton("Back");
+    QPushButton *addButton = new QPushButton("Новая запись");
+    QPushButton *editButton = new QPushButton("Редактировать");
+    QPushButton *backButton = new QPushButton("Назад");
 
     layout->addWidget(addButton);
     layout->addWidget(editButton);
@@ -170,17 +166,47 @@ void MainWindow::showDataView() {
 }
 
 void MainWindow::showPrintView() {
-    QPrintDialog printDialog(this);
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::NativeFormat);
+
+    QPrintDialog printDialog(&printer, this);
     if (printDialog.exec() == QDialog::Accepted) {
-        QPrinter *printer = printDialog.printer();
-        // Печать данных с использованием printer
+        QString html;
+        html += "<html><head><style>table, th, td { border: 1px solid black; border-collapse: collapse; }</style></head><body><table>";
+
+        // Добавляем заголовки столбцов
+        html += "<tr>";
+        QSqlRecord record = model->record();
+        for (int i = 0; i < record.count(); ++i) {
+            html += "<th>" + record.fieldName(i) + "</th>";
+        }
+        html += "</tr>";
+
+        // Получаем все записи из модели и добавляем их в HTML-таблицу
+        QSqlQuery query("SELECT * FROM products");
+        while (query.next()) {
+            html += "<tr>";
+            for (int i = 0; i < query.record().count(); ++i) {
+                html += "<td>" + query.value(i).toString() + "</td>";
+            }
+            html += "</tr>";
+        }
+
+        html += "</table></body></html>";
+
+        // Создаем QTextDocument и устанавливаем HTML-данные для печати
+        QTextDocument document;
+        document.setHtml(html);
+
+        // Выполняем печать
+        document.print(&printer);
     }
 }
 
 void MainWindow::showAnalyticsView() {
     QDialog *analyticsView = new QDialog(this);
-    analyticsView->setWindowTitle("Analytics");
-
+    analyticsView->setWindowTitle("Аналитика");
+    analyticsView->resize(600, 400);
     QVBoxLayout *layout = new QVBoxLayout(analyticsView);
 
     QLabel *totalRecordsLabel = new QLabel("Total Records: " + QString::number(model->rowCount()));
@@ -205,5 +231,6 @@ void MainWindow::showAnalyticsView() {
 }
 
 void MainWindow::showAddRecordDialog() {
+    addRecordDialog->setModal(true);
     addRecordDialog->show();
 }

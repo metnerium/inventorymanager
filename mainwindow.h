@@ -17,7 +17,7 @@ class AddRecordDialog : public QDialog {
     Q_OBJECT
 
 public:
-    AddRecordDialog(QWidget *parent = nullptr);
+    explicit AddRecordDialog(QWidget *parent = nullptr);
 
 private:
     QLineEdit *storeNameEdit;
