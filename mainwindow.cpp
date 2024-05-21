@@ -152,13 +152,18 @@ void MainWindow::showDataView() {
 
     QPushButton *addButton = new QPushButton("Новая запись");
     QPushButton *editButton = new QPushButton("Редактировать");
+    QPushButton *refreshButton = new QPushButton("Обновить таблицу");
     QPushButton *backButton = new QPushButton("Назад");
 
     layout->addWidget(addButton);
+    layout->addWidget(refreshButton);
     layout->addWidget(editButton);
     layout->addWidget(backButton);
 
     connect(addButton, &QPushButton::clicked, this, &MainWindow::showAddRecordDialog);
+    connect(refreshButton, &QPushButton::clicked, this, [=](){
+        tableView->setModel(model);
+    });
     connect(editButton, &QPushButton::clicked, this, &MainWindow::showEditRecordDialog);
     connect(backButton, &QPushButton::clicked, dataView, &QDialog::close);
     tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -256,6 +261,7 @@ EditRecordDialog::EditRecordDialog(QSqlTableModel* model, MainWindow* parent)
 void EditRecordDialog::saveChanges()
 {
     if (model->submitAll()) {
+
         mainWindow->refresh();
         accept();
 
