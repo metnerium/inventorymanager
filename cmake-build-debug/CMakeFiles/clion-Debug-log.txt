@@ -1,4 +1,13 @@
-/home/meit/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/241.15989.121/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/meit/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/241.15989.121/bin/ninja/linux/x64/ninja -G Ninja -S /home/meit/war1 -B /home/meit/war1/cmake-build-debug
+/home/meit/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/241.15989.121/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /home/meit/CLionProjects/inventorymanager -B /home/meit/CLionProjects/inventorymanager/cmake-build-debug
+CMake Deprecation Warning:
+  Support for "Extra Generators" like
+
+    CodeBlocks
+
+  is deprecated and will be removed from a future version of CMake.  IDEs may
+  use the cmake-file-api(7) to view CMake-generated project build trees.
+
+
 -- The CXX compiler identification is GNU 13.2.0
 -- Detecting CXX compiler ABI info
 -- Detecting CXX compiler ABI info - done
@@ -7,4 +16,4 @@
 -- Detecting CXX compile features - done
 -- Configuring done (0.3s)
 -- Generating done (0.0s)
--- Build files have been written to: /home/meit/war1/cmake-build-debug
+-- Build files have been written to: /home/meit/CLionProjects/inventorymanager/cmake-build-debug

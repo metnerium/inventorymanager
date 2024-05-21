@@ -39,7 +39,9 @@ MainWindow::MainWindow(QWidget *parent)
     model = new QSqlTableModel(this, db);
     model->setTable("products");
     model->select();
-
+    modelCopy = new QSqlTableModel(this, db);
+    modelCopy->setTable("products");
+    modelCopy->select();
     setupUI();
     createAddRecordDialog();
 }
@@ -157,11 +159,9 @@ void MainWindow::showDataView() {
     layout->addWidget(backButton);
 
     connect(addButton, &QPushButton::clicked, this, &MainWindow::showAddRecordDialog);
-    connect(editButton, &QPushButton::clicked, [=]() {
-        tableView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
-    });
+    connect(editButton, &QPushButton::clicked, this, &MainWindow::showEditRecordDialog);
     connect(backButton, &QPushButton::clicked, dataView, &QDialog::close);
-
+    tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     dataView->exec();
 }
 
@@ -229,8 +229,71 @@ void MainWindow::showAnalyticsView() {
 
     analyticsView->exec();
 }
+EditRecordDialog::EditRecordDialog(QSqlTableModel* model, QWidget *parent)
+        : QDialog(parent), model(model)
+{
+    setWindowTitle("Редактирование записей");
+    resize(800, 600);
 
+    QVBoxLayout* layout = new QVBoxLayout(this);
+
+    tableView = new QTableView(this);
+    tableView->setModel(model);
+    layout->addWidget(tableView);
+
+    QHBoxLayout* buttonLayout = new QHBoxLayout;
+    saveButton = new QPushButton("Сохранить");
+    cancelButton = new QPushButton("Отмена");
+    buttonLayout->addWidget(saveButton);
+    buttonLayout->addWidget(cancelButton);
+    layout->addLayout(buttonLayout);
+
+    connect(saveButton, &QPushButton::clicked, this, &EditRecordDialog::saveChanges);
+    connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
+    tableView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+}
+
+void EditRecordDialog::saveChanges()
+{
+    if (model->submitAll()) {
+        // Обновляем модель данных в главном окне
+        MainWindow* mainWindow = qobject_cast<MainWindow*>(parent());
+        if (mainWindow) {
+            mainWindow->model->select();
+        }
+        accept();
+    } else {
+        QMessageBox::critical(this, "Error", "Failed to save changes");
+    }
+}
 void MainWindow::showAddRecordDialog() {
+    addRecordDialog->storeNameEdit->clear();
+    addRecordDialog->productArticleEdit->clear();
+    addRecordDialog->productNameEdit->clear();
+    addRecordDialog->receiptDateEdit->setDate(QDate::currentDate());
+    addRecordDialog->amountEdit->clear();
+    addRecordDialog->priceEdit->clear();
+    addRecordDialog->soldCountEdit->clear();
+    addRecordDialog->employeeNameEdit->clear();
     addRecordDialog->setModal(true);
     addRecordDialog->show();
+}
+void MainWindow::showEditRecordDialog()
+{
+    // Создаем новую копию модели данных
+    delete modelCopy;
+    modelCopy = new QSqlTableModel(this, db);
+    modelCopy->setTable("products");
+    modelCopy->select();
+    EditRecordDialog editDialog(modelCopy, this);
+    if (editDialog.exec() == QDialog::Accepted) {
+        // Если пользователь нажал "Сохранить", заменяем основную модель данных
+        model = modelCopy;
+        modelCopy = nullptr;
+        model->select();
+    }
+    // Если пользователь нажал "Отмена", мы просто выходим из диалога, и modelCopy будет удален при закрытии приложения
+}
+void MainWindow::refresh() {
+
 }

@@ -1,5 +1,5 @@
-/home/meit/war1/cmake-build-debug/war1_autogen/EWIEGA46WW/moc_mainwindow.cpp: /home/meit/war1/mainwindow.h \
-  /home/meit/war1/cmake-build-debug/war1_autogen/moc_predefs.h \
+/home/meit/CLionProjects/inventorymanager/cmake-build-debug/war1_autogen/EWIEGA46WW/moc_mainwindow.cpp: /home/meit/CLionProjects/inventorymanager/mainwindow.h \
+  /home/meit/CLionProjects/inventorymanager/cmake-build-debug/war1_autogen/moc_predefs.h \
   /usr/include/asm-generic/errno-base.h \
   /usr/include/asm-generic/errno.h \
   /usr/include/assert.h \
@@ -112,6 +112,7 @@
   /usr/include/c++/13/compare \
   /usr/include/c++/13/concepts \
   /usr/include/c++/13/cstddef \
+  /usr/include/c++/13/cstdint \
   /usr/include/c++/13/cstdlib \
   /usr/include/c++/13/cwchar \
   /usr/include/c++/13/cwctype \
@@ -170,9 +171,6 @@
   /usr/include/unistd.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
-  /usr/include/x86_64-linux-gnu/asm/errno.h \
-  /usr/include/x86_64-linux-gnu/asm/unistd.h \
-  /usr/include/x86_64-linux-gnu/asm/unistd_64.h \
   /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
   /usr/include/x86_64-linux-gnu/bits/confname.h \
   /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
@@ -356,4 +354,7 @@
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h \
-  /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
+  /usr/lib/linux/uapi/x86/asm/errno.h \
+  /usr/lib/linux/uapi/x86/asm/unistd.h \
+  /usr/lib/linux/uapi/x86/asm/unistd_64.h
