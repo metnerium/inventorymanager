@@ -1,0 +1,49 @@
+app-id: ru.metnerium.war1
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: war1
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --filesystem=home
+  - --device=dri
+modules:
+  - name: qt-base
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/app
+      - -DQT_BUILD_EXAMPLES=OFF
+      - -DQT_BUILD_TESTS=OFF
+    sources:
+      - type: git
+        url: https://code.qt.io/qt/qtbase.git
+        tag: v6.5.3
+    cleanup:
+      - /lib/cmake
+      - /lib/pkgconfig
+      - /doc
+
+  - name: qt-sql
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/app
+    sources:
+      - type: git
+        url: https://code.qt.io/qt/qttools.git
+        tag: v6.5.3
+
+  - name: war1
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_PREFIX_PATH=/app
+    sources:
+      - type: dir
+        path: .
+    cleanup:
+      - /include
+      - /lib/cmake

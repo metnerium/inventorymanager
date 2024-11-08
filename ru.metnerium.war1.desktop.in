@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=War1
+Comment=Inventory Management System
+Exec=war1
+Icon=ru.metnerium.war1
+Categories=Office;
+StartupNotify=true
